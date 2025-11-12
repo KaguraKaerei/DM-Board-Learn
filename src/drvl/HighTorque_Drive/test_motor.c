@@ -1,0 +1,54 @@
+#include "test_motor.h"
+
+
+
+
+void test_motor_control(const uint8_t id, uint8_t imode)
+{
+    uint8_t mode = imode % 11;
+    const port_t portx = PORT1;
+
+    switch (mode)
+    {
+    case 0:
+        motor_set_dq_vlot(portx, id, 2);
+        break;
+    case 1:
+        motor_set_dq_current(portx, id, 0.5);
+        break;
+    case 2:
+        motor_set_pos(portx, id, 3);
+        break;
+    case 3:
+        motor_set_vel(portx, id, 0.1f);
+        break;
+    case 4:
+        motor_set_tqe(portx, id, 0.5f);
+        break;
+    case 5:
+        motor_set_pos_vel(portx, id, 2, 0.1);
+        break;
+    case 6:
+        motor_set_pos_vel_MAXtqe(portx, id, 2, 0.1, 10);
+        break;
+    case 7:
+        motor_set_pos_vel_acc(portx, id, 2, 0.5, 0.1);
+        break;
+    case 8:
+        motor_set_pos_vel_tqe_kp_kd(portx, id, 1, 0.1, 0, 1, 0.1);
+        break;
+    
+    case 9:
+        motor_set_stop(portx, id);
+        break;
+    case 10:
+        motor_set_brake(portx, id);
+        break;
+
+    default:
+        break;
+    }
+
+    motor_get_state_send(portx, id);
+}
+

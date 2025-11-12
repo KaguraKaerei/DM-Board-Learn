@@ -8,4 +8,7 @@
 
 void WS2812_Ctrl(uint8_t r, uint8_t g, uint8_t b);
 
+void tool_test(void);
+int tool_test_int(void);
+
 #endif

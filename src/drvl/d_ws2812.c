@@ -19,3 +19,21 @@ void WS2812_Ctrl(uint8_t r, uint8_t g, uint8_t b)
         HAL_SPI_Transmit(&WS2812_SPI_UNIT, &res, 1, 0xFFFF);
     }
 }
+
+#include "s_DefineTools.h"
+void tool_test(void)
+{
+    printf("test1\r\n");
+    NB_DELAY_MS(1000);
+    printf("      test2\r\n");
+    NB_DELAY_MS(1000);
+    printf("            test3\r\n");
+}
+
+int tool_test_int(void)
+{
+    printf("test_int1\r\n");
+    NB_DELAY_MS(1000, -1);
+    printf("          test_int2\r\n");
+    return 0;
+}

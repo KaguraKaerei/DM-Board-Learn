@@ -7,13 +7,13 @@
 #include "main.h"
 // 驱动层头文件
 #include "d_ws2812.h"
+#include "d_HTDriver.h"
 // 服务层头文件
 #include "s_LOG.h"
 #include "s_BlueTooth.h"
 #include "s_DefineTools.h"
 // 应用层头文件
-
-
+#include "test_motor.h"
 
 /* ==================== 初 始 化 与 轮 询 进 程 ==================== */
 
@@ -24,13 +24,14 @@
 static inline void SysManager_Init(void)
 {
     /* ===== 驱动层初始化部分 ===== */
-
+    HT_Driver_Init();
     /* ===== 服务层初始化部分 ===== */
     BlueTooth_Init();
     /* ===== 应用层初始化部分 ===== */
 
     /* ===== 轮询前执行部分 ===== */
-
+    HAL_Delay(200);
+    HT_Set_Position(PORT1, HT_CHASSIS, -3.14f);
 }
 
 /**
@@ -45,9 +46,23 @@ static inline void SysManager_Process(void)
 
     /* ===== 周期运行部分 ===== */
     PERIODIC_TASK(10, {
-        // WS2812_Ctrl(0, 0, 255);
+        WS2812_Ctrl(255, 0, 0);
+        // tool_test();
     });
-    
+    PERIODIC_TASK(100, {
+        p_motor_state_s state = HT_Get_State_With_Update(PORT1, HT_CHASSIS);
+        if(state){
+            printf("[pos,vel,trq,mode,fault,ack,model]:%f,%f,%f,%d,%d,%d,%d\r\n",
+                   state->position,
+                   state->velocity,
+                   state->torque,
+                   state->mode,
+                   state->fault,
+                   state->ack,
+                   state->model);
+        }
+    });
+
     /* ===== 事件驱动部分 ===== */
 
 }
