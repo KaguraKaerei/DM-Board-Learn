@@ -31,7 +31,7 @@ static inline void SysManager_Init(void)
 
     /* ===== 轮询前执行部分 ===== */
     HAL_Delay(200);
-    HT_Set_Position(PORT1, HT_CHASSIS, -3.14f);
+    HT_Set_Position(PORT1, HT_JOINT1, -3.14f);
 }
 
 /**
@@ -50,17 +50,7 @@ static inline void SysManager_Process(void)
         // tool_test();
     });
     PERIODIC_TASK(100, {
-        p_motor_state_s state = HT_Get_State_With_Update(PORT1, HT_CHASSIS);
-        if(state){
-            printf("[pos,vel,trq,mode,fault,ack,model]:%f,%f,%f,%d,%d,%d,%d\r\n",
-                   state->position,
-                   state->velocity,
-                   state->torque,
-                   state->mode,
-                   state->fault,
-                   state->ack,
-                   state->model);
-        }
+        printf("pos:%f\r\n", HT_Get_Position(PORT1, HT_JOINT1));
     });
 
     /* ===== 事件驱动部分 ===== */

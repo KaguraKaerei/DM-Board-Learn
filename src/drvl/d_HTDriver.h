@@ -52,11 +52,13 @@ void HT_Driver_Init(void);
 // 读取电机状态(不更新)(CAN通道, 电机ID)
 #define HT_Get_State(portx, id) motor_get_state(portx, id)
 // 读取角度(不更新)(CAN通道, 电机ID)
-#define HT_Get_Position(portx, id)                                  \
-            do{                                                     \
-                p_motor_state_s state = motor_get_state(portx, id); \
-                state ? state->position : 0.0f;                     \
-            } while(0)
+static inline float HT_Get_Position(port_t portx, HT_Arm_Part_t id)
+{
+    p_motor_state_s state = HT_Get_State(portx, id);
+    return state ? state->position : 0.0f;
+}
+// 状态更新(所有电机)
+#define HT_State_Update() motor_process_state_all()
 
 p_motor_state_s HT_Get_State_With_Update(port_t portx, HT_Arm_Part_t id);
 float HT_Get_Position_With_Update(port_t portx, HT_Arm_Part_t id);
