@@ -58,7 +58,17 @@ static inline float HT_Get_Position(port_t portx, HT_Arm_Part_t id)
     return state ? state->position : 0.0f;
 }
 // 状态更新(所有电机)
-#define HT_State_Update() motor_process_state_all()
+static inline void HT_State_Update()
+{ 
+    for(uint8_t j = 0; j < MOTOR_PORT_NUM; j++){
+        port_t portx = (port_t)(j + 1);
+        for(uint8_t i = 0; i < HT_MAX_PART; i++){
+            HT_Arm_Part_t id = (HT_Arm_Part_t)(i + 1);
+            motor_get_state_send(portx, id);
+        }
+    }
+    motor_process_state_all();
+}
 
 p_motor_state_s HT_Get_State_With_Update(port_t portx, HT_Arm_Part_t id);
 float HT_Get_Position_With_Update(port_t portx, HT_Arm_Part_t id);

@@ -46,6 +46,7 @@ static inline void SysManager_Process(void)
 
     /* ===== 周期运行部分 ===== */
     PERIODIC_TASK(10, {
+        HT_State_Update();
         WS2812_Ctrl(255, 0, 0);
         // tool_test();
     });
