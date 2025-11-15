@@ -1,8 +1,9 @@
-#include "d_HTDriver.h"
+#include "d_HTDM_Driver.h"
 #include "motor.h"
 #include "motor_config.h"
 #include "motor_control.h"
 #include "dm_motor_ctrl.h"
+#include "dm_motor_drv.h"
 
 /* ========================= 私 有 变 量 声 明 ========================= */
 
@@ -15,10 +16,10 @@
 /* ========================= 接 口 函 数 实 现 ========================= */
 
 /**
- * @brief 高擎电机驱动初始化函数
+ * @brief 高擎与达妙电机驱动初始化函数
  * @note 达妙板子的CAN口是可控电源接口, 需要PC14置高电平
  */
-void HT_Driver_Init(void)
+void HTDM_Driver_Init(void)
 {
     HAL_GPIO_WritePin(CAN1_EN_GPIO_Port, CAN1_EN_Pin, GPIO_PIN_SET);
     if(HAL_FDCAN_ConfigGlobalFilter(&hfdcan1,
@@ -47,6 +48,14 @@ void HT_Driver_Init(void)
     HAL_Delay(100);
     dm_motor_enable(&hfdcan1, &dm_motor[Motor1]);
     HAL_Delay(1000);
+}
+
+/**
+ * @brief 达妙电机周期任务发送函数
+ */
+void DM_Runner(void)
+{
+    dm_motor_ctrl_send(&hfdcan1, &dm_motor[Motor1]);
 }
 
 /**

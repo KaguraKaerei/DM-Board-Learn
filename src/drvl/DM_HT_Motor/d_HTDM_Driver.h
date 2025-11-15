@@ -1,5 +1,5 @@
-#ifndef _D_HTDRIVER_H_
-#define _D_HTDRIVER_H_
+#ifndef _D_HTDM_DRIVER_H_
+#define _D_HTDM_DRIVER_H_
 
 #include "main.h"
 #include "motor_control.h"
@@ -15,9 +15,9 @@ typedef enum{
     HT_MAX_PART
 } HT_Arm_Part_t;
 
-/* ==================== 高 擎 电 机 控 制 接 口 ==================== */
+/* ==================== 高 擎 与 达 妙 电 机 控 制 接 口 ==================== */
 
-void HT_Driver_Init(void);
+void HTDM_Driver_Init(void);
 
 /* ===== 基本模式 ===== */
 // 停止(CAN通道, 电机ID)
@@ -47,7 +47,7 @@ void HT_Driver_Init(void);
 // 设置位置, 速度, 扭矩与PD参数(CAN通道, 电机ID, 位置单位: 弧度, 速度单位: 弧度每秒, 扭矩单位: 牛米, 比例增益, 微分增益)
 #define HT_MIT(portx, id, pos, vel, tqe, kp, kd) motor_set_pos_vel_tqe_kp_kd(portx, id, pos, vel, tqe, kp, kd)
 
-/* ==================== 高 擎 电 机 读 取 接 口 ==================== */
+/* ==================== 高 擎 与 达 妙 电 机 读 取 接 口 ==================== */
 
 // 读取电机状态(不更新)(CAN通道, 电机ID)
 #define HT_Get_State(portx, id) motor_get_state(portx, id)
@@ -69,6 +69,8 @@ static inline void HT_State_Update()
     }
     motor_process_state_all();
 }
+
+void DM_Runner(void);
 
 p_motor_state_s HT_Get_State_With_Update(port_t portx, HT_Arm_Part_t id);
 float HT_Get_Position_With_Update(port_t portx, HT_Arm_Part_t id);

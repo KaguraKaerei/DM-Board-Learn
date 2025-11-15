@@ -1,5 +1,5 @@
-#ifndef _MY_CAN_H
-#define _MY_CAN_H
+#ifndef _D_HTDM_CAN_H
+#define _D_HTDM_CAN_H
 
 
 #include "main.h"

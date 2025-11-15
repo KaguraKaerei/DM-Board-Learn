@@ -2,7 +2,7 @@
 #define _LIBELYBOT_CAN_H
 
 
-#include "my_can.h"
+#include "d_HTDM_CAN.h"
 #include "convert.h"
 
 /* NAN 表示不限制 */

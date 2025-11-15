@@ -2,7 +2,7 @@
 #define __DM_MOTOR_DRV_H__
 #include "main.h"
 #include "fdcan.h"
-#include "my_can.h"
+#include "d_HTDM_CAN.h"
 
 #define MIT_MODE 			0x000
 #define POS_MODE			0x100

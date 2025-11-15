@@ -7,9 +7,7 @@
 #include "main.h"
 // 驱动层头文件
 #include "d_ws2812.h"
-#include "d_HTDriver.h"
-#include "dm_motor_ctrl.h"
-#include "dm_motor_drv.h"
+#include "d_HTDM_Driver.h"
 // 服务层头文件
 #include "s_LOG.h"
 #include "s_BlueTooth.h"
@@ -27,14 +25,13 @@
 static inline void SysManager_Init(void)
 {
     /* ===== 驱动层初始化部分 ===== */
-    HT_Driver_Init();
+    HTDM_Driver_Init();
     /* ===== 服务层初始化部分 ===== */
     BlueTooth_Init();
     /* ===== 应用层初始化部分 ===== */
 
     /* ===== 轮询前执行部分 ===== */
-
-    
+    HT_Set_Position(PORT1, HT_JOINT1, 0.0f);
 }
 
 /**
@@ -49,13 +46,8 @@ static inline void SysManager_Process(void)
 
     /* ===== 周期运行部分 ===== */
 
-    PERIODIC_TASK(1, {
-        dm_motor_ctrl_send(&hfdcan1, &dm_motor[Motor1]);
-        WS2812_Ctrl(255, 0, 0);
-    });
-
     PERIODIC_TASK(10, {
-
+        DM_Runner();
         WS2812_Ctrl(255, 0, 0);
     });
 

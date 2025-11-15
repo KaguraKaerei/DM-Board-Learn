@@ -32,8 +32,9 @@ targets:
         - src/apl
         - src/drvl
         - src/srvl
-        - src/drvl/HighTorque_Drive
-        - src/drvl/DM_Drive
+        - src/drvl/DM_HT_Motor/DM_Drive
+        - src/drvl/DM_HT_Motor/HighTorque_Drive
+        - src/drvl/DM_HT_Motor
       libList: []
     excludeList: []
     toolchain: GCC
