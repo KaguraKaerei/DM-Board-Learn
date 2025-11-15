@@ -23,22 +23,29 @@ void dm_motor_init(void)
     memset(&dm_motor[Motor5], 0, sizeof(dm_motor[Motor5]));
     memset(&dm_motor[Motor6], 0, sizeof(dm_motor[Motor6]));
 
-    // 配置 Motor1 的电机信息（其余如需用再仿照配置）
-    dm_motor[Motor1].id      = 0x01;
-    dm_motor[Motor1].mst_id  = 0x00;      // 实际无主从，用于区分
-    dm_motor[Motor1].tmp.read_flag = 1;
+    // 初始化所有电机
+    for(uint8_t i = Motor1; i < num; ++i){
+        dm_motor[i].id      = 0x01;
+        dm_motor[i].mst_id  = 0x00;      // 实际无主从，用于区分
+        dm_motor[i].tmp.read_flag = 1;
 
-    dm_motor[Motor1].ctrl.mode    = mit_mode;
-    dm_motor[Motor1].ctrl.vel_set = 1.0f;
-    dm_motor[Motor1].ctrl.pos_set = 0.0f;
-    dm_motor[Motor1].ctrl.tor_set = 0.0f;
-    dm_motor[Motor1].ctrl.cur_set = 0.02f;
-    dm_motor[Motor1].ctrl.kp_set  = 0.0f;
-    dm_motor[Motor1].ctrl.kd_set  = 1.0f;
+        dm_motor[i].ctrl.mode    = mit_mode;
+        dm_motor[i].ctrl.vel_set = 0.0f;
+        dm_motor[i].ctrl.pos_set = 0.0f;
+        dm_motor[i].ctrl.tor_set = 0.0f;
+        dm_motor[i].ctrl.cur_set = 0.0f;
+        dm_motor[i].ctrl.kp_set  = 0.0f;
+        dm_motor[i].ctrl.kd_set  = 0.0f;
 
-    dm_motor[Motor1].tmp.PMAX = 12.5f;
-    dm_motor[Motor1].tmp.VMAX = 30.0f;
-    dm_motor[Motor1].tmp.TMAX = 10.0f;
+        dm_motor[i].tmp.PMAX = 12.5f;
+        dm_motor[i].tmp.VMAX = 30.0f;
+        dm_motor[i].tmp.TMAX = 10.0f;
+
+        dm_motor_enable(&hfdcan1, &dm_motor[i]);
+        HAL_Delay(1);
+        dm_motor_ctrl_send(&hfdcan1, &dm_motor[i]);
+        HAL_Delay(1);
+    }
 }
 
 /**
@@ -230,7 +237,7 @@ uint8_t fdcanx_receive(FDCAN_HandleTypeDef *hfdcan, uint16_t *rec_id, uint8_t *b
 *               收到 ID 为 0x00 时，认为是电机反馈帧。
 ************************************************************************
 **/
-void fdcan1_rx_callback(void)
+__weak void fdcan1_rx_callback(void)
 {
     uint16_t rec_id;
     uint8_t  rx_data[8] = {0};

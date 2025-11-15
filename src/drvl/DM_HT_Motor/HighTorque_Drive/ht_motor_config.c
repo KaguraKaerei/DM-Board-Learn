@@ -1,4 +1,4 @@
-#include "motor_config.h"
+#include "ht_motor_config.h"
 
 
 static uint8_t motor_config_closed_loop(void (*action)(FDCAN_HandleTypeDef *, uint8_t), FDCAN_HandleTypeDef *fdcanHandle, uint8_t id)

@@ -22,10 +22,6 @@ typedef enum
     Motor4,
     Motor5,
     Motor6,
-	Motor7,
-	Motor8,
-	Motor9,
-	Motor10,
     num
 } motor_num;
 

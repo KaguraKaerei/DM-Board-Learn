@@ -1,4 +1,4 @@
-#include "motor.h"
+#include "ht_motor.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -252,11 +252,19 @@ static void motor_process_state(FDCAN_HandleTypeDef *fdcanHandle, const uint8_t 
 static FDCAN_RxHeaderTypeDef fdcan_rx_header;
 static uint8_t fdcan_rdata[64] = {0};
 
+void motor_process_state_frame(FDCAN_HandleTypeDef *fdcanHandle,
+                               uint8_t id,
+                               const uint8_t *p_data,
+                               uint8_t len)
+{
+    motor_process_state(fdcanHandle, id, p_data, len);
+}
+
 /**
  * @brief 解析所有 CAN 通道 FIFO 中的电机状态数据
  *
  */
-void motor_process_state_all()
+__weak void motor_process_state_all()
 {
     for (int i = 0; i < MOTOR_PORT_NUM; i++)
     {

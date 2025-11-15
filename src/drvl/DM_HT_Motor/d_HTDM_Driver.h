@@ -2,77 +2,81 @@
 #define _D_HTDM_DRIVER_H_
 
 #include "main.h"
-#include "motor_control.h"
+
+/* ==================== 电 机 ID 定 义 ==================== */
 
 typedef enum{
-    HT_ARM_PART_NONE = 0,
-    HT_CHASSIS,
-    HT_JOINT1,
-    HT_JOINT2,
-    HT_JOINT3,
-    HT_JOINT4,
-    HT_JOINT5,
-    HT_MAX_PART
-} HT_Arm_Part_t;
+    MOTOR_NONE = 0,
+    // 高擎电机 ID
+    MOTOR_HT_CHASSIS = 1,
+    MOTOR_HT_JOINT1,
+    MOTOR_HT_JOINT2,
+    MOTOR_HT_JOINT3,
+    MOTOR_HT_JOINT4,
+    MOTOR_HT_JOINT5,
 
-/* ==================== 高 擎 与 达 妙 电 机 控 制 接 口 ==================== */
+    // 达妙电机 ID
+    MOTOR_DM_1 = 101,
+    MOTOR_DM_2,
+    MOTOR_DM_3,
+    MOTOR_DM_4,
+    MOTOR_DM_5,
+    MOTOR_DM_6,
+} Motor_ID_e;
 
-void HTDM_Driver_Init(void);
+/* ==================== 电 机 厂 商 类 型 ==================== */
 
-/* ===== 基本模式 ===== */
-// 停止(CAN通道, 电机ID)
-#define HT_Stop(portx, id) motor_set_stop(portx, id)
-// 刹车(CAN通道, 电机ID)
-#define HT_Brake(portx, id) motor_set_brake(portx, id)
-// 设置电压(CAN通道, 电机ID, 电压V)
-#define HT_Set_dqVolt(portx, id, volt) motor_set_dq_vlot(portx, id, volt)
-// 设置电流(CAN通道, 电机ID, 电流A)
-#define HT_Set_dqCurrent(portx, id, cur) motor_set_dq_current(portx, id, cur)
-// 设置位置(CAN通道, 电机ID, 位置单位: 弧度)
-#define HT_Set_Position(portx, id, pos) motor_set_pos(portx, id, pos)
-// 设置速度(CAN通道, 电机ID, 速度单位: 弧度每秒)
-#define HT_Set_Velocity(portx, id, vel) motor_set_vel(portx, id, vel)
-// 设置扭矩(CAN通道, 电机ID, 扭矩单位: 牛米)
-#define HT_Set_Torque(portx, id, tqe) motor_set_tqe(portx, id, tqe)
+typedef enum{
+    MOTOR_TYPE_HT,
+    MOTOR_TYPE_DM
+} Motor_Type_e;
 
-/* ===== 复合模式 ===== */
-// 设置位置与速度(CAN通道, 电机ID, 位置单位: 弧度, 速度单位: 弧度每秒)
-#define HT_Set_Pos_Vel(portx, id, pos, vel) motor_set_pos_vel(portx, id, pos, vel)
-// 设置位置, 速度与最大扭矩(CAN通道, 电机ID, 位置单位: 弧度, 速度单位: 弧度每秒, 扭矩单位: 牛米)
-#define HT_Set_Pos_Vel_MAXtqe(portx, id, pos, vel, tqe) motor_set_pos_vel_MAXtqe(portx, id, pos, vel, tqe)
-// 设置速度与加速度(CAN通道, 电机ID, 速度单位: 弧度每秒, 加速度单位: 弧度每秒平方)
-#define HT_Set_Vel_Acc(portx, id, vel, acc) motor_set_vel_acc(portx, id, vel, acc)
-// 设置位置, 速度与加速度(CAN通道, 电机ID, 位置单位: 弧度, 速度单位: 弧度每秒, 加速度单位: 弧度每秒平方)
-#define HT_TrapeZoid(portx, id, pos, vel, acc) motor_set_pos_vel_acc(portx, id, pos, vel, acc)
-// 设置位置, 速度, 扭矩与PD参数(CAN通道, 电机ID, 位置单位: 弧度, 速度单位: 弧度每秒, 扭矩单位: 牛米, 比例增益, 微分增益)
-#define HT_MIT(portx, id, pos, vel, tqe, kp, kd) motor_set_pos_vel_tqe_kp_kd(portx, id, pos, vel, tqe, kp, kd)
+/* ==================== 模 式 定 义 ==================== */
 
-/* ==================== 高 擎 与 达 妙 电 机 读 取 接 口 ==================== */
+typedef enum{
+    DM_MODE_MIT = 1,   // mit_mode
+    DM_MODE_POS = 2,   // pos_mode
+    DM_MODE_SPD = 3,   // spd_mode
+    DM_MODE_PSI = 4    // psi_mode
+} DM_Mode_e;
 
-// 读取电机状态(不更新)(CAN通道, 电机ID)
-#define HT_Get_State(portx, id) motor_get_state(portx, id)
-// 读取角度(不更新)(CAN通道, 电机ID)
-static inline float HT_Get_Position(port_t portx, HT_Arm_Part_t id)
-{
-    p_motor_state_s state = HT_Get_State(portx, id);
-    return state ? state->position : 0.0f;
-}
-// 状态更新(所有电机)
-static inline void HT_State_Update()
-{ 
-    for(uint8_t j = 0; j < MOTOR_PORT_NUM; j++){
-        port_t portx = (port_t)(j + 1);
-        for(uint8_t i = 0; i < HT_MAX_PART; i++){
-            HT_Arm_Part_t id = (HT_Arm_Part_t)(i + 1);
-            motor_get_state_send(portx, id);
-        }
-    }
-    motor_process_state_all();
-}
+typedef enum{
+    HT_MODE_DQ_VOLT = 1,        // DQ 电压模式
+    HT_MODE_DQ_CURRENT,         // DQ 电流模式
+    HT_MODE_POS,                // 位置模式
+    HT_MODE_VEL,                // 速度模式
+    HT_MODE_TORQUE,             // 力矩模式
+    HT_MODE_POS_VEL,            // 位置速度模式
+    HT_MODE_TRAPEZOID,          // 梯形控制模式
+    HT_MODE_MIT,                // MIT 运控模式
+    HT_MODE_STOP,               // 停止模式
+    HT_MODE_BRAKE               // 刹车模式
+} HT_Mode_e;
 
-void DM_Runner(void);
+/* ==================== 统 一 接 口 ==================== */
 
-p_motor_state_s HT_Get_State_With_Update(port_t portx, HT_Arm_Part_t id);
-float HT_Get_Position_With_Update(port_t portx, HT_Arm_Part_t id);
+// 初始化
+void Motor_HTDM_Driver_Init(void);
+
+void Motor_HT_Set_DQVolt(Motor_ID_e id, float dq_v);
+void Motor_HT_Set_DQCurrent(Motor_ID_e id, float dq_i);
+void Motor_HT_Set_Position(Motor_ID_e id, float pos_rad);
+void Motor_HT_Set_Velocity(Motor_ID_e id, float vel_rad_s);
+void Motor_HT_Set_Torque(Motor_ID_e id, float torque);
+void Motor_HT_Set_PosVel(Motor_ID_e id, float pos_rad, float vel_rad_s);
+void Motor_HT_Set_PosVelAcc(Motor_ID_e id, float pos_rad, float vel_rad_s, float acc_rad_s2);
+void Motor_HT_Set_MIT(Motor_ID_e id, float pos_rad, float vel_rad_s, float torque, float kp, float kd);
+void Motor_HT_Stop(Motor_ID_e id);
+void Motor_HT_Brake(Motor_ID_e id);
+
+void Motor_DM_Set_MIT(Motor_ID_e id, float pos_rad, float vel_rad_s, float torque, float kp, float kd);
+void Motor_DM_Set_PosVel(Motor_ID_e id, float pos_rad, float vel_rad_s);
+void Motor_DM_Set_Velocity(Motor_ID_e id, float vel_rad_s);
+void Motor_DM_Set_PosVelCur(Motor_ID_e id, float pos_rad, float vel_rad_s, float cur_amp);
+
+// 达妙的获取角度很慢, 获取速度和力矩有点问题
+float Motor_Get_Position(Motor_ID_e id);
+float Motor_Get_Velocity(Motor_ID_e id);
+float Motor_Get_Torque(Motor_ID_e id);
 
 #endif
