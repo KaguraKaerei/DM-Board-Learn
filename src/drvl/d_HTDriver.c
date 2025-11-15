@@ -36,6 +36,17 @@ void HT_Driver_Init(void)
         0) != HAL_OK){
         Error_Handler();
     }
+
+    HAL_Delay(1000);
+    dm_motor_init();
+    HAL_Delay(10);
+
+    write_motor_data(dm_motor[Motor1].id, 10, mit_mode, 0, 0, 0);
+    HAL_Delay(100);
+    save_motor_data(dm_motor[Motor1].id, 10);
+    HAL_Delay(100);
+    dm_motor_enable(&hfdcan1, &dm_motor[Motor1]);
+    HAL_Delay(1000);
 }
 
 /**
