@@ -25,13 +25,14 @@
 static inline void SysManager_Init(void)
 {
     /* ===== 驱动层初始化部分 ===== */
-    HTDM_Driver_Init();
+    Motor_HTDM_Driver_Init();
     /* ===== 服务层初始化部分 ===== */
     BlueTooth_Init();
     /* ===== 应用层初始化部分 ===== */
 
     /* ===== 轮询前执行部分 ===== */
-    HT_Set_Position(PORT1, HT_JOINT1, 0.0f);
+    // Motor_HT_Set_Position(MOTOR_HT_JOINT1, 3.14f);
+    Motor_DM_Set_PosVel(MOTOR_DM_1, 3.14f, 3.14f);
 }
 
 /**
@@ -46,13 +47,14 @@ static inline void SysManager_Process(void)
 
     /* ===== 周期运行部分 ===== */
 
-    PERIODIC_TASK(10, {
-        DM_Runner();
+    PERIODIC_TASK(50, {
         WS2812_Ctrl(255, 0, 0);
     });
 
-    PERIODIC_TASK(100, {
-
+    PERIODIC_TASK(50, {
+        // float ht_pos = Motor_Get_Position(MOTOR_HT_JOINT1);
+        float dm_pos = Motor_Get_Position(MOTOR_DM_1);
+        _INFO("DM1: %.3f rad", dm_pos);
     });
 
     /* ===== 事件驱动部分 ===== */

@@ -2,9 +2,9 @@
 #define _MOTOR_CONTROL_H
 
 
-#include "libelybot_can.h"
-#include "convert.h"
-#include "motor.h"
+#include "ht_libelybot_can.h"
+#include "ht_convert.h"
+#include "ht_motor.h"
 
 
 void motor_set_dq_vlot(port_t portx, const uint8_t id, const float volt);

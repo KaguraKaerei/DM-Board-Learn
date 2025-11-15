@@ -11,8 +11,8 @@
 
 #include "fdcan.h"
 #include "d_HTDM_CAN.h"
-#include "convert.h"
-#include "libelybot_can.h"
+#include "ht_convert.h"
+#include "ht_libelybot_can.h"
 
 
 typedef enum
@@ -64,10 +64,12 @@ p_motor_state_s motor_get_state_pointer1(FDCAN_HandleTypeDef *fdcanHandle);
 p_motor_state_s motor_get_state_pointer2(port_t portx);
 uint8_t motor_get_model2(port_t portx, uint8_t id);
 
-void motor_process_state_all(void);
+__weak void motor_process_state_all(void);
 
-
-
+void motor_process_state_frame(FDCAN_HandleTypeDef *fdcanHandle,
+                               uint8_t id,
+                               const uint8_t *p_data,
+                               uint8_t len);
 
 #define  MOTOR_SDK_VERSION   "2.0.0"
 

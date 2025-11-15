@@ -3,7 +3,7 @@
 
 
 #include "d_HTDM_CAN.h"
-#include "convert.h"
+#include "ht_convert.h"
 
 /* NAN 表示不限制 */
 #define  INI8_NAN   0x80
