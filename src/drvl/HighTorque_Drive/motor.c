@@ -273,12 +273,3 @@ void motor_process_state_all()
         }
     }
 }
-
-void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)  
-{
-    if(hfdcan->Instance == FDCAN1 || hfdcan->Instance == FDCAN2 || hfdcan->Instance == FDCAN3)  
-    {
-        motor_process_state_all();
-    }
-}
-

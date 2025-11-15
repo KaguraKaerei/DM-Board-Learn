@@ -33,6 +33,7 @@ targets:
         - src/drvl
         - src/srvl
         - src/drvl/HighTorque_Drive
+        - src/drvl/DM_Drive
       libList: []
     excludeList: []
     toolchain: GCC

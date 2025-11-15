@@ -13,7 +13,8 @@
 #include "s_BlueTooth.h"
 #include "s_DefineTools.h"
 // 应用层头文件
-#include "test_motor.h"
+
+
 
 /* ==================== 初 始 化 与 轮 询 进 程 ==================== */
 
@@ -24,7 +25,7 @@
 static inline void SysManager_Init(void)
 {
     /* ===== 驱动层初始化部分 ===== */
-    HT_Driver_Init();
+    // HT_Driver_Init();
     /* ===== 服务层初始化部分 ===== */
     BlueTooth_Init();
     /* ===== 应用层初始化部分 ===== */
@@ -48,7 +49,6 @@ static inline void SysManager_Process(void)
     PERIODIC_TASK(10, {
         HT_State_Update();
         WS2812_Ctrl(255, 0, 0);
-        // tool_test();
     });
     PERIODIC_TASK(100, {
         printf("pos:%f\r\n", HT_Get_Position(PORT1, HT_JOINT1));

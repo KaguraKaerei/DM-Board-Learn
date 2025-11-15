@@ -2,7 +2,7 @@
 #include "motor.h"
 #include "motor_config.h"
 #include "motor_control.h"
-#include "test_motor.h"
+#include "dm_motor_ctrl.h"
 
 /* ========================= 私 有 变 量 声 明 ========================= */
 
@@ -65,4 +65,11 @@ float HT_Get_Position_With_Update(port_t portx, HT_Arm_Part_t id)
 
 /* ========================= 私 有 函 数 实 现 ========================= */
 
-
+void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)  
+{
+    if(hfdcan->Instance == FDCAN1 || hfdcan->Instance == FDCAN2 || hfdcan->Instance == FDCAN3)  
+    {
+        motor_process_state_all();
+        if(hfdcan->Instance == FDCAN1) fdcan1_rx_callback();
+    }
+}
