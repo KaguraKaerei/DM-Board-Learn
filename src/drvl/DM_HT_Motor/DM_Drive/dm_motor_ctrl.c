@@ -25,8 +25,8 @@ void dm_motor_init(void)
 
     // 初始化所有电机
     for(uint8_t i = Motor1; i < num; ++i){
-        dm_motor[i].id      = 0x01;
-        dm_motor[i].mst_id  = 0x00;      // 实际无主从，用于区分
+        dm_motor[i].id      = i + 1;
+        dm_motor[i].mst_id  = 0x000;
         dm_motor[i].tmp.read_flag = 1;
 
         dm_motor[i].ctrl.mode    = mit_mode;
@@ -40,6 +40,11 @@ void dm_motor_init(void)
         dm_motor[i].tmp.PMAX = 12.5f;
         dm_motor[i].tmp.VMAX = 30.0f;
         dm_motor[i].tmp.TMAX = 10.0f;
+
+        float_type_u mst_id_write;
+        mst_id_write.u_val = dm_motor[i].mst_id;
+        write_motor_data(dm_motor[i].id, RID_MST_ID, mst_id_write.b_val[0], mst_id_write.b_val[1], mst_id_write.b_val[2], mst_id_write.b_val[3]);
+        HAL_Delay(1);
 
         dm_motor_enable(&hfdcan1, &dm_motor[i]);
         HAL_Delay(1);

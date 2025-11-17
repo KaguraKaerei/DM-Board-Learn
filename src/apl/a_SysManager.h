@@ -32,7 +32,7 @@ static inline void SysManager_Init(void)
 
     /* ===== 轮询前执行部分 ===== */
     // Motor_HT_Set_Position(MOTOR_HT_JOINT1, 3.14f);
-    Motor_DM_Set_PosVel(MOTOR_DM_1, 3.14f, 3.14f);
+    Motor_DM_Set_PosVel(MOTOR_DM_1, 1.57f, 3.14f);
 }
 
 /**
@@ -51,7 +51,7 @@ static inline void SysManager_Process(void)
         WS2812_Ctrl(255, 0, 0);
     });
 
-    PERIODIC_TASK(50, {
+    PERIODIC_TASK(10, {
         // float ht_pos = Motor_Get_Position(MOTOR_HT_JOINT1);
         float dm_pos = Motor_Get_Position(MOTOR_DM_1);
         _INFO("DM1: %.3f rad", dm_pos);

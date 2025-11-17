@@ -458,7 +458,7 @@ void read_motor_data(uint16_t id, uint8_t rid)
 * @details:    	读取电机控制反馈的数据
 ************************************************************************
 **/
-void read_motor_ctrl_fbdata(uint16_t id) 
+void read_motor_ctrl_fbdata(uint16_t id)
 {
 	uint8_t can_id_l = id & 0xFF;       // 低 8 位
     uint8_t can_id_h = (id >> 8) & 0x07; // 高 3 位

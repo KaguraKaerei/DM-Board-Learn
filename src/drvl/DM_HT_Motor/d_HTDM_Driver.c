@@ -12,8 +12,6 @@
 // 记录每个电机当前模式
 static HT_Mode_e s_ht_mode[8] = { 0 };
 static DM_Mode_e s_dm_mode[8] = { 0 };
-// 想读取的达妙电机的ID
-static uint8_t s_dm_read_id = 0;
 
 /* ========================= 私 有 函 数 声 明 ========================= */
 
@@ -211,9 +209,10 @@ float Motor_Get_Position(Motor_ID_e id)
     }
     else{
         uint8_t idx = Get_DM_ID(id);
+        // 上面的发送读取实时反馈信息命令, 下面的发送读取电机参数命令
+        read_motor_ctrl_fbdata(dm_motor[idx].id);
         read_all_motor_data(&dm_motor[idx]);
-        s_dm_read_id = idx;
-        return dm_motor[idx].tmp.p_m;
+        return dm_motor[idx].para.pos;
     }
 }
 
@@ -230,8 +229,8 @@ float Motor_Get_Velocity(Motor_ID_e id)
     }
     else{
         uint8_t idx = Get_DM_ID(id);
+        read_motor_ctrl_fbdata(dm_motor[idx].id);
         read_all_motor_data(&dm_motor[idx]);
-        s_dm_read_id = idx;
         return dm_motor[idx].para.vel;
     }
 }
@@ -249,8 +248,8 @@ float Motor_Get_Torque(Motor_ID_e id)
     }
     else{
         uint8_t idx = Get_DM_ID(id);
+        read_motor_ctrl_fbdata(dm_motor[idx].id);
         read_all_motor_data(&dm_motor[idx]);
-        s_dm_read_id = idx;
         return dm_motor[idx].para.tor;
     }
 }
@@ -262,7 +261,6 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0ITs)
     if(hfdcan->Instance == FDCAN1 || hfdcan->Instance == FDCAN2 || hfdcan->Instance == FDCAN3){
         FDCAN_RxHeaderTypeDef rxHeader;
         uint8_t rx_data[64];
-
         while(HAL_FDCAN_GetRxMessage(&hfdcan1, FDCAN_RX_FIFO0, &rxHeader, rx_data) == HAL_OK){
             uint8_t len = 0;
             if(rxHeader.DataLength <= FDCAN_DLC_BYTES_8)
@@ -282,10 +280,12 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0ITs)
                 continue;
             }
 
-            // 达妙电机反馈判断
-            if(can_id == 0x00){
-                dm_motor_fbdata(&dm_motor[s_dm_read_id], rx_data);
-                receive_motor_data(&dm_motor[s_dm_read_id], rx_data);
+            // 达妙电机反馈判断(获取实际读取到的电机ID, 防止异步混乱)
+            uint8_t motor_idx_from_data = (rx_data[0] & 0x0F);
+            uint8_t actual_idx = motor_idx_from_data - 1;
+            if(can_id == dm_motor[actual_idx].mst_id){
+                dm_motor_fbdata(&dm_motor[actual_idx], rx_data);
+                receive_motor_data(&dm_motor[actual_idx], rx_data);
                 continue;
             }
         }
