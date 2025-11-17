@@ -5,6 +5,10 @@
 
 /* ==================== 电 机 ID 定 义 ==================== */
 
+/**
+ * @brief 统一电机ID枚举
+ * @note  高擎电机ID范围: 1-100, 达妙电机ID范围: 101-200
+ */
 typedef enum{
     MOTOR_NONE = 0,
     // 高擎电机 ID
@@ -26,6 +30,9 @@ typedef enum{
 
 /* ==================== 电 机 厂 商 类 型 ==================== */
 
+/**
+ * @brief 电机厂商类型枚举
+ */
 typedef enum{
     MOTOR_TYPE_HT,
     MOTOR_TYPE_DM
@@ -33,13 +40,19 @@ typedef enum{
 
 /* ==================== 模 式 定 义 ==================== */
 
+/**
+ * @brief 达妙电机控制模式枚举
+ */
 typedef enum{
-    DM_MODE_MIT = 1,   // mit_mode
-    DM_MODE_POS = 2,   // pos_mode
-    DM_MODE_SPD = 3,   // spd_mode
-    DM_MODE_PSI = 4    // psi_mode
+    DM_MODE_MIT = 1,   // mit_mode : 位置+速度+力矩+kp+kd
+    DM_MODE_POS = 2,   // pos_mode : 位置+速度
+    DM_MODE_SPD = 3,   // spd_mode : 速度
+    DM_MODE_PSI = 4    // psi_mode : 位置+速度+电流
 } DM_Mode_e;
 
+/**
+ * @brief 高擎电机控制模式枚举
+ */
 typedef enum{
     HT_MODE_DQ_VOLT = 1,        // DQ 电压模式
     HT_MODE_DQ_CURRENT,         // DQ 电流模式
@@ -53,9 +66,8 @@ typedef enum{
     HT_MODE_BRAKE               // 刹车模式
 } HT_Mode_e;
 
-/* ==================== 统 一 接 口 ==================== */
+/* ==================== 电 机 控 制 统 一 接 口 ==================== */
 
-// 初始化
 void Motor_HTDM_Driver_Init(void);
 
 void Motor_HT_Set_DQVolt(Motor_ID_e id, float dq_v);
@@ -74,7 +86,6 @@ void Motor_DM_Set_PosVel(Motor_ID_e id, float pos_rad, float vel_rad_s);
 void Motor_DM_Set_Velocity(Motor_ID_e id, float vel_rad_s);
 void Motor_DM_Set_PosVelCur(Motor_ID_e id, float pos_rad, float vel_rad_s, float cur_amp);
 
-// 达妙的获取角度很慢, 获取速度和力矩有点问题
 float Motor_Get_Position(Motor_ID_e id);
 float Motor_Get_Velocity(Motor_ID_e id);
 float Motor_Get_Torque(Motor_ID_e id);

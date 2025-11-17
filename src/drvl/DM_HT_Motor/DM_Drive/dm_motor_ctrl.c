@@ -29,7 +29,7 @@ void dm_motor_init(void)
         dm_motor[i].mst_id  = 0x000;
         dm_motor[i].tmp.read_flag = 1;
 
-        dm_motor[i].ctrl.mode    = mit_mode;
+        dm_motor[i].ctrl.mode    = pos_mode;
         dm_motor[i].ctrl.vel_set = 0.0f;
         dm_motor[i].ctrl.pos_set = 0.0f;
         dm_motor[i].ctrl.tor_set = 0.0f;

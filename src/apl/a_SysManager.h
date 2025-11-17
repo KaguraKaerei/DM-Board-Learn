@@ -32,7 +32,7 @@ static inline void SysManager_Init(void)
 
     /* ===== 轮询前执行部分 ===== */
     // Motor_HT_Set_Position(MOTOR_HT_JOINT1, 3.14f);
-    Motor_DM_Set_PosVel(MOTOR_DM_1, 1.57f, 3.14f);
+    Motor_DM_Set_PosVel(MOTOR_DM_1, 6.28f, 6.28f);
 }
 
 /**
