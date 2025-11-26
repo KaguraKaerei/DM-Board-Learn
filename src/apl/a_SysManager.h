@@ -31,7 +31,7 @@ static inline void SysManager_Init(void)
     /* ===== 应用层初始化部分 ===== */
 
     /* ===== 轮询前执行部分 ===== */
-    // Motor_HT_Set_Position(MOTOR_HT_JOINT1, 3.14f);
+    Motor_HT_Set_Position(MOTOR_HT_JOINT1, 0.0f);
     Motor_DM_Set_PosVel(MOTOR_DM_1, 6.28f, 6.28f);
 }
 

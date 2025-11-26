@@ -50,8 +50,9 @@ targets:
             ASM_FLAGS: -DDEBUG
           beforeBuildTasks: []
           c/cpp-compiler:
+            C_FLAGS: -x c++
             language-c: c11
-            language-cpp: c++11
+            language-cpp: c++17
             one-elf-section-per-data: true
             one-elf-section-per-function: true
             optimization: level-debug
