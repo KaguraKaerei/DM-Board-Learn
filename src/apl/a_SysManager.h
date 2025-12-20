@@ -8,6 +8,7 @@
 // 驱动层头文件
 #include "d_ws2812.h"
 #include "d_HTDM_Driver.h"
+#include "d_HTDM_CAN.h"
 // 服务层头文件
 #include "s_LOG.h"
 #include "s_BlueTooth.h"
@@ -25,14 +26,39 @@
 static inline void SysManager_Init(void)
 {
     /* ===== 驱动层初始化部分 ===== */
-    Motor_HTDM_Driver_Init();
+    // Motor_HTDM_Driver_Init();
     /* ===== 服务层初始化部分 ===== */
     BlueTooth_Init();
     /* ===== 应用层初始化部分 ===== */
 
     /* ===== 轮询前执行部分 ===== */
-    Motor_HT_Set_Position(MOTOR_HT_JOINT1, 0.0f);
-    Motor_DM_Set_PosVel(MOTOR_DM_1, 6.28f, 6.28f);
+
+    HAL_GPIO_WritePin(CAN1_EN_GPIO_Port, CAN1_EN_Pin, GPIO_PIN_SET);
+
+        if(HAL_FDCAN_ConfigGlobalFilter(&hfdcan1,
+        FDCAN_ACCEPT_IN_RX_FIFO0,
+        FDCAN_ACCEPT_IN_RX_FIFO0,
+        FDCAN_REJECT_REMOTE,
+        FDCAN_REJECT_REMOTE) != HAL_OK){
+        Error_Handler();
+    }
+    if(HAL_FDCAN_Start(&hfdcan1) != HAL_OK){
+        Error_Handler();
+    }
+    if(HAL_FDCAN_ActivateNotification(&hfdcan1,
+        FDCAN_IT_RX_FIFO0_NEW_MESSAGE,
+        0) != HAL_OK){
+        Error_Handler();
+    }
+
+    HAL_Delay(1000);
+
+    // 23 30 30 30 50 30 35 30
+    // 30 54 31 30 30 30 21
+    uint8_t data[2][8] = { {0x23, 0x30, 0x30, 0x30, 0x50, 0x30, 0x35, 0x30},
+                           {0x30, 0x54, 0x31, 0x30, 0x30, 0x30, 0x21, 0x00} };
+    for(int i = 0; i < 2; i++) can_send(&hfdcan1, 0x008, data[i], sizeof(data[i]));
+    
 }
 
 /**
@@ -48,14 +74,12 @@ static inline void SysManager_Process(void)
     /* ===== 周期运行部分 ===== */
 
     PERIODIC_TASK(50, {
-        WS2812_Ctrl(255, 0, 0);
-    });
+        WS2812_Ctrl(0, 0, 255);
+        });
 
     PERIODIC_TASK(10, {
-        // float ht_pos = Motor_Get_Position(MOTOR_HT_JOINT1);
-        float dm_pos = Motor_Get_Position(MOTOR_DM_1);
-        _INFO("DM1: %.3f rad", dm_pos);
-    });
+
+        });
 
     /* ===== 事件驱动部分 ===== */
 
